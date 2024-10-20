@@ -1,11 +1,12 @@
 import cloudscraper
 from bs4 import BeautifulSoup
 import time
+import pandas as pd
 
 scraper = cloudscraper.create_scraper()
 
 BASE_URL = "https://www.albumoftheyear.org/ratings/user-highest-rated/all/"
-pages_to_scrape = 10   # NO MORE THAN 40! Scrape atleast with honor
+pages_to_scrape = 1   # NO MORE THAN 40! Scrape atleast with honor
 all_album_data = []
 
 for page in range(1, pages_to_scrape + 1):
@@ -48,3 +49,8 @@ for page in range(1, pages_to_scrape + 1):
             })
 
         time.sleep(5)
+
+df = pd.DataFrame(all_album_data)
+df.index = df.index + 1
+df['artist'] = df['artist'].str.replace(r'^\d+\.\s*', '', regex=True)
+df.to_csv('aoty.csv', index=True, index_label="id")
